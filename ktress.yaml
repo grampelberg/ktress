@@ -1,0 +1,47 @@
+---
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ktress
+
+---
+
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: ktress
+  namespace: ktress
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: ktress
+    spec:
+      containers:
+      - image: thomasr/ktress:v1
+        imagePullPolicy: Always
+        name: ktress
+
+        env:
+          - name: CPU
+            value: "4"
+          - name: IO
+            value: "4"
+          - name: VM
+            value: "2"
+          - name: VM_BYTES
+            value: 128M
+          - name: FORK
+            value: "4"
+
+        command: ["/bin/sh", "-c"]
+        args:
+          - |-
+            stress-ng \
+              --cpu ${CPU} \
+              --io ${IO} \
+              --vm ${VM} \
+              --vm-bytes ${VM_BYTES} \
+              --fork ${FORK}
